@@ -52,23 +52,23 @@
 1. Install the *base* package (This package includes the Linux kernel and firmware for common hardware)
     - Command: pacstrap /mnt base linux linux-firmware
 1. Install other packages you want: 
-    - I installed:  {man-db, man-pages, texinfo} for documentation<br>
+    - I installed:<br>  {man-db, man-pages, texinfo} for documentation<br>
                     {sof-firmware} for sound cards<br>
                     {iproute2, iputils} for networking<br>
                     {vim} for text editing
     - Command: pacstrap /mnt *package_name*
 
-## Configuring the System 
+### Configuring the System 
 1. Generate the *fstab* file so that when the system boots it knows where to mount the partitions:
     - Command: genfstab -U /mnt >> /mnt/etc/fstab
 1. Change root into the new system:
     - Command: arch-chroot /mnt
-### Time zone
+#### Time zone
 1. Set the time zone (running *timedatectl list-timezones* I found our timezone to be America/Chicago):
     - Command: ln -sf /usr/share/zoneinfo/*Region*/*City* /etc/localtime (My case: ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime)
 1. Set the Hardware Clock from the System Clock, and update the timestamps in /etc/adjtime:
     - Command: hwclock --systohc
-### Localization
+#### Localization
 1. Edit */etc/locale.gen* and uncomment the locales you want:
     - To use the US locale I uncommented *en_US.UTF-8 UTF-8*
 1. Generate the locale's you uncommented:
@@ -77,7 +77,7 @@
     - Write in the file: LANG=*chosen_local* (My case: LANG=en_US.UTF-8)
 1. Create and edit the */etc/vconsole.conf* file with your chosen keyboard layout:
     - Write in the file: KEYMAP=*chosen_keyboard_layout* (My case:KEYMAP=us)
-### Network configuration
+#### Network configuration
 1. Create and edit /etc/hostname file to input your chosen hostname (I chose: LCARS-2112-9A)
 1. Configure the /etc/hosts file as follows:
 
@@ -92,10 +92,10 @@
       127.0.1.1        LCARS-2112-9A
 
 1. Get *NetworkManager* working:
-        - Install dependencies and tools: 
-                -Command: pacman -S wpa_supplicant wireless_tools networkmanager iw dhcpcd netctl dialog ppp
-        - Enable Network Manager: 
-                -Command: systemctl enable NetworkManager
+	- Install dependencies and tools:<br>
+	- Command: pacman -S wpa_supplicant wireless_tools networkmanager iw dhcpcd netctl dialog ppp<br>
+	- Enable Network Manager:<br>
+	- Command: systemctl enable NetworkManager
 ### Root password
 1. Set the root password:
     - Command: passwd
@@ -116,70 +116,81 @@
     - Command: nmcli
 3. Now the basic installation is complete!!:)
 
+## Create user accounts 
+1. Install *sudo*:
+	- Command: pacman -S sudo
+1. Create my user account: (with the home directory)
+	- Command: useradd -m dfant
+	- Command: passwd dfant
+1. Create my sal account: (with the home directory)
+	- Command: useradd -m sal
+	- Command: passwd -e sal (GraceHopper1906)
+1. Create my codi account: (with the home directory)
+	- Command: useradd -m codi
+	- Command: passwd -e codi (GraceHopper1906)
+1. Edit /etc/sudoers to give all three users sudo privaleges:
+	- Command: EDITOR=vim visudo (to launch visudo with vim, for some reason I can't get visudo to work otherwise...)
+	- Under 'User privilege specification' add the lines: *dfant ALL=(ALL) ALL*, *codi ALL=(ALL) ALL*, *sal ALL=(ALL) ALL*
+
 ## Customization
 ### Desktop environment
 Note-to-self: In the future I may want to build a custom DE from the Openbox WM instead
 For this installation, I chose to install LXDE (https://wiki.archlinux.org/title/LXDE & https://wiki.lxde.org/en/Arch_Linux)
-1. Install LXDE: (I wanted to see all the packages included in LXDE so I looked at this list https://archlinux.org/groups/x86_64/lxde/)
-        - Command: pacman -S lxde-common lxdm lxsession openbox (bare bones install of LXDE)
-        - Command: pacman -S lxde (FULL install of LXDE)
-        - Command: systemctl enable lxdm.service (to launch lxdm on startup)
+1. Install LXDE: (I wanted to see all the packages included in LXDE so I looked at this list https://archlinux.org/groups/x86_64/lxde/)<br>
+	- Command: pacman -S lxde-common lxdm lxsession openbox (bare bones install of LXDE)<br>
+	- Command: pacman -S lxde (FULL install of LXDE)<br>
+	- Command: systemctl enable lxdm.service (to launch lxdm on startup)
 1. Launch the DE:
-		- Command: lxdm
+	- Command: lxdm
 1. Customized the look of the DE until you are satisfied (from the "Customize Look and Feel" menu)
 1. Set resolution as 1280x768:
-		- Command: xrandr --output Virtual-1 --mode 1280x768
+	- Command: xrandr --output Virtual-1 --mode 1280x768
 1. Create folder: /home/dfant/Programs/
-1. Add programs I want:
-		- git
-		- base-devel
-		- vivaldi (browser) 
-		- texlive-science (LaTex)
-		- yay (for AUR)
-		- gtk-theme-numix-sx
-		- arc-icon-theme-full-git
-		- leafpad
-		- net-tools
-1. Note: using AUR: (without yay)
-		- Find a package I want
-		- Download using: 'git clone *Package_URL*' inside ~/Programs/
-		- cd *package_folder*
-		- makepkg -si PKGBUILD
-### Adding colors to the terminal (for dfant)
+1. Add programs I want:<br>
+	- git<br>
+	- base-devel<br>
+	- vivaldi (browser) <br>
+	- texlive-science (LaTex)<br>
+	- yay (for AUR)<br>
+	- gtk-theme-numix-sx<br>
+	- arc-icon-theme-full-git<br>
+	- leafpad<br>
+	- net-tools<br>
+1. Note: using AUR: (without yay)<br>
+	- Find a package I want<br>
+	- Download using: 'git clone *Package_URL*' inside ~/Programs/<br>
+	- cd *package_folder*<br>
+	- makepkg -si PKGBUILD
+
+### Install different shells and ssh
+1. I installed zsh and fish for the dfant user
+	- Command: sudo pacman -S zsh (then I went through the install proccess)
+	- Command: sudo pacman -S fish
+1. To install ssh, run the command:
+	- Command: pacman -S openssh
+
+### Adding colors to the bash (for dfant)
 1. I followed This guide for doing adding the colors: https://averagelinuxuser.com/linux-terminal-color/ 
-		- I also used: https://wiki.archlinux.org/title/Bash/Prompt_customization as a reference
+	- I also used: https://wiki.archlinux.org/title/Bash/Prompt_customization as a reference
 1. Make a copy of .bashrc for safe editing:
-		- Command: cp .bashrc .bashrc.backup
+	- Command: cp .bashrc .bashrc.backup
 1. Then I downloaded his files for bash.bashrc, .bashrc and DIR_COLORS
 1. I then copied the contents of bash.bashrc into .bashrc
 1. I then moved .bashrc into /home/dfant/ (overwriting the old version)
 1. To add color to pacman, I first backed up '/etc/pacman.conf'
-		- Command: cp /etc/pacman.conf /etc/pacman.conf.backup
-		- And uncommented the word 'Color'
+	- Command: cp /etc/pacman.conf /etc/pacman.conf.backup
+	- And uncommented the word 'Color'
 
-## Create user accounts 
-1. Install *sudo*:
-		- Command: pacman -S sudo
-1. Create my user account: (with the home directory)
-		- Command: useradd -m dfant
-		- Command: passwd dfant
-1. Create my sal account: (with the home directory)
-		- Command: useradd -m sal
-		- Command: passwd -e sal (GraceHopper1906)
-1. Create my codi account: (with the home directory)
-		- Command: useradd -m codi
-		- Command: passwd -e codi (GraceHopper1906)
-1. Edit /etc/sudoers to give all three users sudo privaleges:
-		- Command: EDITOR=vim visudo (to launch visudo with vim, for some reason I can't get visudo to work otherwise...)
-		- Under 'User privilege specification' add the lines: *dfant ALL=(ALL) ALL*, *codi ALL=(ALL) ALL*, *sal ALL=(ALL) ALL*
+### Setting up aliases
+1. Create a file called .bash_aliases inside ~ folder
+1. Append the following to ~/.bashrc:<br>
+	if [ -f ~/.bash_aliases ]; then<br>
+	. ~/.bash_aliases<br>
+	fi
 
-## Install different shells and ssh
-1. I installed zsh and fish for the dfant user
-		- Command: sudo pacman -S zsh (then I went through the install proccess)
-		- Command: sudo pacman -S fish
-1. To install ssh, run the command:
-		- Command: pacman -S openssh
-## List of alias' I made:
+1. Run the Command: source  ~/.bash_aliases
+
+#### List of alias' I made: (list these inside ~/.bash_aliases)
 1. alias vi=vim
 1. alias svi='sudo vi'
 1. alias reboot='sudo /sbin/reboot'
@@ -188,6 +199,7 @@ For this installation, I chose to install LXDE (https://wiki.archlinux.org/title
 1. alias shutdown='sudo /sbin/shutdown'
 1. alias meminfo='free -mlt'
 1. alias cpuinfo='lscpu'
-
-
-
+1. alias c='clear'
+1. alias h='history'
+1. alias j='jobs -l'
+1. alias visudo='sudo EDITOR=vim visudo'
