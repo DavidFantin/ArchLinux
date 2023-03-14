@@ -142,7 +142,7 @@ For this installation, I chose to install LXDE (https://wiki.archlinux.org/title
 	- Command: systemctl enable lxdm.service (to launch lxdm on startup)
 1. Launch the DE:
 	- Command: lxdm
-1. Customized the look of the DE until you are satisfied (from the "Customize Look and Feel" menu)
+1. Customize the look of the DE until you are satisfied (from the "Customize Look and Feel" menu)
 1. Set resolution as 1280x768:
 	- Command: xrandr --output Virtual-1 --mode 1280x768
 1. Create folder: /home/dfant/Programs/
