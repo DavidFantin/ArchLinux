@@ -13,13 +13,13 @@
 
 ## Pre-Partition Settings
 1. Setting Keyboard Layout: 
-    - Command: loadkeys us
-1. Verify the boot mode: 
-    - Command: ls /sys/firmware/efi/efivars
+    loadkeys us
+1. Verify the boot mode:
+    ls /sys/firmware/efi/efivars
 1. Test internet connection: 
-    - Command: ping archlinux.org
+    ping archlinux.org
 1. Update the system clock
-    - Command: timedatectl set-ntp true
+    timedatectl set-ntp true
     
 ## Partitioning and Formatting and Mounting the Drive
 1. Find the drive name:
